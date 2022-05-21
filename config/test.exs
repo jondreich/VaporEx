@@ -10,3 +10,5 @@ config :vapor, Vapor.Repo,
 config :vapor, Oban, testing: :inline
 
 config :vapor, :steam, base_url: "https://store.steampowered.com/api/"
+
+import_config "dev.secret.exs"

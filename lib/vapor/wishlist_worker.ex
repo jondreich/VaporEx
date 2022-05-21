@@ -23,6 +23,7 @@ defmodule Vapor.WishlistWorker do
   end
 
   defp send_sales_message([]), do: :noop
+
   defp send_sales_message(games) do
     channel_id = Application.fetch_env!(:vapor, :job_channel_id)
     Api.create_message(channel_id, embed: EmbedHelper.wishlist_embed(games))

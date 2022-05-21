@@ -9,6 +9,8 @@ config :vapor, Vapor.Repo,
   pool_size: 10
 
 config :vapor,
-  job_channel_id: 846470743113859082
+  job_channel_id: 846_470_743_113_859_082
 
 config :vapor, :steam, base_url: "https://store.steampowered.com/api/"
+
+import_config "dev.secret.exs"

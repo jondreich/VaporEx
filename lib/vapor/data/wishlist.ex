@@ -32,7 +32,7 @@ defmodule Vapor.Data.Wishlist do
   def update_game(attrs, id) do
     Repo.get(WishlistGame, id)
     |> WishlistGame.changeset(attrs)
-    |> Repo.update()
+    |> Repo.update!()
   end
 
   @spec create_wishlist_game(map()) :: {:ok, WishlistGame.t()} | {:error, Ecto.Changeset.t()}

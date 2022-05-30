@@ -7,51 +7,39 @@ defmodule Vapor.Commands.Add do
   require Logger
 
   import Vapor.Helpers.EmbedHelper
-  alias Nostrum.Api
+  import Nostrum.Struct.Embed
   alias Vapor.Services.Steam
   alias Vapor.Data.Wishlist
 
-  @spec run(list, Nostrum.Struct.Message.t()) :: {:ok, Nostrum.Struct.Message.t()}
-  def run([], _msg), do: {:error, "No game ID was provided"}
+  @spec run(list, Nostrum.Struct.User.t()) :: Nostrum.Struct.Embed.t()
+  def run([], _user), do: {:error, "No game ID was provided"}
 
-  def run(params, msg) do
+  def run(params, user) do
     case Steam.app_details(List.first(params)) do
       :error ->
-        Api.create_message(msg.channel_id,
-          embed:
-            error_embed(
-              "Game not added",
-              "Error occurred while getting game with ID `#{List.first(params)}`"
-            )
-        )
+        embed("Game not added", :error)
+        |> put_description("Error occurred while getting game with ID `#{List.first(params)}`")
 
       %{"success" => false} ->
-        Api.create_message(msg.channel_id,
-          embed:
-            error_embed(
-              "Game not added",
-              "Steam game with ID `#{List.first(params)}` was not found"
-            )
-        )
+        embed("Game not added", :error)
+        |> put_description("Steam game with ID `#{List.first(params)}` was not found")
 
       %{"data" => data} ->
-        case add_game_to_wishlist(data, msg.author) do
+        case add_game_to_wishlist(data, user) do
           true ->
-            Api.create_message(msg.channel_id, embed: game_added_embed(data, msg.author))
+            embed("#{data["name"]} added to wishlist!", :primary)
+            |> put_description(data["short_description"] || "")
+            |> put_url("https://store.steampowered.com/app/#{data["steam_appid"]}")
+            |> put_image(data["header_image"])
+            |> put_footer("Requested by #{user.username}")
 
           [steam_id: {"already added", _constraint}] ->
-            Api.create_message(msg.channel_id,
-              embed: info_embed("Game not added", "#{data["name"]} is already on wishlist")
-            )
+            embed("Game not added", :info)
+            |> put_description("#{data["name"]} is already on wishlist")
 
           _any ->
-            Api.create_message(msg.channel_id,
-              embed:
-                error_embed(
-                  "Game not added",
-                  "Error occurred while adding `#{data["name"]}` to wishlist"
-                )
-            )
+            embed("Game not added", :error)
+            |> put_description("Error occurred while adding `#{data["name"]}` to wishlist")
         end
     end
   end

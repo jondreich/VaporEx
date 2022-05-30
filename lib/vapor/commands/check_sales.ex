@@ -6,19 +6,20 @@ defmodule Vapor.Commands.CheckSales do
   """
   require Logger
 
-  alias Nostrum.Api
-
+  import Vapor.Helpers.EmbedHelper
+  import Nostrum.Struct.Embed
   alias Vapor.Services.Steam
-  alias Vapor.Helpers.EmbedHelper
 
-  @spec run(list, Nostrum.Struct.Message.t()) :: {:ok, Nostrum.Struct.Message.t()}
-  def run(_params, msg) do
-    Steam.get_all_sales()
-    |> EmbedHelper.on_sale_embed()
-    |> send_sales(msg)
-  end
+  @spec run(list()) :: Nostrum.Struct.Embed.t()
+  def run(_params) do
+    case Steam.get_all_sales() do
+      [] ->
+        embed("No sales found", :info)
+        |> put_description("No wishlisted games currently on sale.")
 
-  defp send_sales(embed, msg) do
-    Api.create_message(msg.channel_id, embed: embed)
+      games ->
+        embed("Current sales")
+        |> put_games(games)
+    end
   end
 end

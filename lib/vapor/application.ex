@@ -8,13 +8,9 @@ defmodule Vapor.Application do
     children = [
       Vapor.Repo,
       Vapor.Consumer,
-      {Oban, oban_config()}
+      Vapor.Scheduler
     ]
 
     Supervisor.start_link(children, strategy: :one_for_one)
-  end
-
-  defp oban_config do
-    Application.fetch_env!(:vapor, Oban)
   end
 end

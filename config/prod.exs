@@ -38,3 +38,5 @@ config :nostrum,
 config :vapor, :steam,
   key: steam_key,
   base_url: "https://store.steampowered.com/api/"
+
+config :logger, level: :info

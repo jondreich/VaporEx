@@ -2,64 +2,31 @@ defmodule Vapor.Helpers.EmbedHelper do
   @moduledoc """
   Module to help with building Discord embeds
   """
+  import Vapor.Helpers.ColorHelper
+  import Nostrum.Struct.Embed
   alias Nostrum.Struct.Embed
-  alias Nostrum.Struct.Embed.{Footer, Image, Field}
+  alias Nostrum.Struct.Embed.Field
 
-  def error_embed(title, body) do
+  @spec embed(String.t(), :error | :info | :primary | :success | :warning) :: Embed.t()
+  def embed(title, color \\ :primary) do
     %Embed{
-      color: 15_158_332,
+      color: color(color),
       title: title,
-      description: body
+      timestamp: DateTime.to_string(DateTime.utc_now())
     }
   end
 
-  def warning_embed(title, body) do
-    %Embed{
-      color: 15_158_332,
-      title: title,
-      description: body
-    }
+  @spec put_game_details(Nostrum.Struct.Embed.t(), map()) :: Embed.t()
+  def put_game_details(embed, game_details) do
+    embed
+    |> put_image(game_details["header_image"])
+    |> put_url("https://store.steampowered.com/app/#{game_details["steam_appid"]}")
+    |> put_description(game_details["short_description"] || "")
   end
 
-  def info_embed(title, body) do
-    %Embed{
-      color: 3_447_003,
-      title: title,
-      description: body
-    }
-  end
-
-  def game_added_embed(game_details, requester) do
-    %Embed{
-      color: 7_419_530,
-      title: "#{game_details["name"]} added to wishlist!",
-      image: %Image{url: game_details["header_image"]},
-      url: "https://store.steampowered.com/app/#{game_details["steam_appid"]}",
-      footer: %Footer{text: "Requested by #{requester.username}"},
-      timestamp: DateTime.utc_now(),
-      description: game_details["short_description"] || ""
-    }
-  end
-
-  def wishlist_embed([]),
-    do: info_embed("Wishlist is empty", "Add a game with `!wishlist add <steam_id>`")
-
-  def wishlist_embed(games) do
-    %Embed{
-      color: 3_447_003,
-      title: "Current Wishlist",
-      timestamp: DateTime.utc_now(),
-      fields: games_to_fields(games)
-    }
-  end
-
-  def on_sale_embed(games) do
-    %Embed{
-      color: 15_277_667,
-      title: "Currently On Sale",
-      timestamp: DateTime.utc_now(),
-      fields: games_to_fields(games)
-    }
+  @spec put_games(Embed.t(), list(Vapor.Data.Schema.WishlistGame.t())) :: Embed.t()
+  def put_games(embed, games) do
+    Kernel.struct(embed, %{fields: games_to_fields(games)})
   end
 
   defp games_to_fields(games) do

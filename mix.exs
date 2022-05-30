@@ -4,7 +4,7 @@ defmodule Vapor.MixProject do
   def project do
     [
       app: :vapor,
-      version: "0.1.0",
+      version: "0.2.0",
       elixir: "~> 1.13",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
@@ -27,8 +27,8 @@ defmodule Vapor.MixProject do
       {:httpoison, "~> 1.8"},
       {:ecto_sql, "~> 3.4"},
       {:postgrex, ">= 0.0.0"},
-      {:oban, "~> 2.12"},
       {:typed_ecto_schema, "~> 0.4.1", runtime: false},
+      {:quantum, "~> 3.0"},
       {:credo, "~> 1.6", only: [:dev, :test], runtime: false}
     ]
   end

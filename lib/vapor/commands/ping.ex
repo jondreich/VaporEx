@@ -4,23 +4,9 @@ defmodule Vapor.Commands.Ping do
 
   `!wishlist pingu`
   """
-  require Logger
 
-  alias Nostrum.Api
-
-  @spec run(list, Nostrum.Struct.Message.t()) :: :ok
-  def run(_params, msg) do
-    case send_pingu(msg) do
-      {:ok, _msg} ->
-        :ok
-
-      _error ->
-        Logger.error("Penguin failed to send")
-        :ok
-    end
-  end
-
-  defp send_pingu(msg) do
-    Api.create_message(msg.channel_id, content: "🐧")
+  @spec run(list()) :: String.t()
+  def run(_params) do
+    "🐧"
   end
 end

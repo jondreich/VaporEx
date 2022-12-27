@@ -33,7 +33,7 @@ defmodule Vapor.Helpers.EmbedHelper do
     Enum.map(games, fn game ->
       %Field{
         name: game.name,
-        value: "https://store.steampowered.com/app/#{game.id}\nSteam Id: #{game.steam_id}",
+        value: "https://store.steampowered.com/app/#{game.steam_id}\nSteam Id: #{game.steam_id}",
         inline: false
       }
     end)

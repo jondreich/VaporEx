@@ -23,7 +23,7 @@ defmodule Vapor.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:nostrum, "~> 0.5.1"},
+      {:nostrum, "~> 0.6"},
       {:httpoison, "~> 1.8"},
       {:ecto_sql, "~> 3.4"},
       {:postgrex, ">= 0.0.0"},
@@ -35,7 +35,10 @@ defmodule Vapor.MixProject do
 
   defp aliases do
     [
-      s: ["run --no-halt"]
+      s: ["run --no-halt"],
+      setup: ["deps.get", "ecto.setup"],
+      "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
+      "ecto.reset": ["ecto.drop", "ecto.setup"]
     ]
   end
 end

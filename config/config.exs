@@ -6,7 +6,7 @@ config :vapor,
 config :vapor, Vapor.Scheduler,
   jobs: [
     check_sales: [
-      schedule: {:cron, "0 * * * *"},
+      schedule: {:cron, "* */6 * * *"},
       task: {Vapor.WishlistWorker, :perform, []}
     ]
   ]
